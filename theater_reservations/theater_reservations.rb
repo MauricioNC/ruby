@@ -1,19 +1,19 @@
-class Teatro
+class Theater
   def initialize
-    @sala = Array.new(100)
-    @vendidos = []
+    @room = Array.new(100) # Create bidimentional array for the theater room
+    @sold = []
 
     print "Raising theater..."
-    set_sala()
+    set_room() # Initializing the room with all the seating free
   end
 
   def menu
     system("cls")
-    print "1.- Ver mapa de asientos\n"
-    print "2.- Vender boletos\n"
-    print "3.- Ver cantidad de boletos vendidos\n"
-    print "4.- Ver cantidad de boletos libres\n"
-    print "0.- Salir\n"
+    print "1.- Print seating map\n"
+    print "2.- Sell tickets\n"
+    print "3.- View count of sold tickets\n"
+    print "4.- View number of free seating\n"
+    print "0.- Leave\n"
     print "==========================\n"
     print "opt: "
     opt = gets.chomp.to_i
@@ -25,26 +25,26 @@ class Teatro
 
       case opt
       when 1
-        print_sala
+        print_room
       when 2
-        reservar_asiento
+        reserve_seating
       when 3
-        boletos_vendidos
+        sold_seating
       when 4
-        boletos_libres
+        free_seating
       when 0
         exit(0)
       else
-        print("\n\nOpcion incorrecta.")
+        print("\n\nInvalid option.")
       end
     end
   end
 
-  def print_sala
+  def print_room
     print "\n\n"
-    (0..99).step(10).each do |i|
+    (0..99).step(10).each do |i| # Just formatting the view of the room in the console
       (i..i+9).each do |j|
-        print "#{@sala[j][:asiento]}\t"
+        print "#{@room[j][:seat]}\t"
       end
       print "\n"
     end
@@ -53,58 +53,60 @@ class Teatro
 
   private
   
-  def reservar_asiento
+  def reserve_seating
     system("cls")
-    print "\n\nCantidad: "
-    @reservar = gets.chomp.to_i
+    print "\n\nQuantity: "
+    @reserve = gets.chomp.to_i
     
-    while @reservar > 0
-      print_sala
-      print "Elige el numero de asiento a reservar: "
-      asiento = gets.chomp.to_i
+    while @reserve > 0
+      print_room
+      print "Choose the number of seating to reserve: "
+      seat = gets.chomp.to_i
       
-      validar_asiento_diponible asiento
+      validate_seating_disponibility seat
       
-      @reservar -= 1
+      @reserve -= 1
     end
   end
   
-  def validar_asiento_diponible asiento
-    if asiento < 1 || asiento > 100
+  # Validates if the seating choosed is out of range or if has already been taken
+
+  def validate_seating_disponibility seat
+    if seat < 1 || seat > 100 # out of range
       system("cls")
-      print "\n\nEl numero de asiento elegido no existe"
+      print "\n\nThe chosen seat number does not exist"
       gets
-    elsif !@vendidos.include? asiento-1
-      set_sala asiento-1
-      @vendidos.push(asiento-1)
-      print_sala
+    elsif !@sold.include? seat-1 
+      set_room seat-1 # seat-1 is the index in the room array
+      @sold.push(seat-1) # memoized array to save the seat sold
+      print_room
     else
       system("cls")
-      puts "\n\nEl asento elegido ya ha sido ocupado\n"
+      puts "\n\nThe seat number choosed is already been taken\n"
       gets
     end
   end
 
-  def set_sala index = nil
-    unless index.nil?
-      @sala[index][:asiento] = "X"
-    else
-      @sala.each_with_index do |val1, i|
-        @sala[i] = {asiento: "L-#{i+1}"}
+  def set_room index = nil
+    unless index.nil? # if index existe, thats means a new ticket has been sold
+      @room[index][:seat] = "X" # reserve the seat
+    else # otherwise set the complete room to free
+      @room.each_with_index do |val1, i| 
+        @room[i] = {seat: "L-#{i+1}"}
       end
     end
   end
 
-  def boletos_vendidos
-    print "\n\nLa sala cuenta con #{@vendidos.count} boletos vendidos"
+  def sold_seating
+    print "\n\nThe room counts with #{@sold.count} sold tickets"
     gets
   end
 
-  def boletos_libres
-    print "\n\nLa suela cuenta con #{@sala.count - @vendidos.count} boletos libres"
+  def free_seating
+    print "\n\nThe room counts with #{@room.count - @sold.count} free tickets"
     gets
   end
 end
 
-teatro = Teatro.new
-teatro.start
+theater = Theater.new
+theater.start
